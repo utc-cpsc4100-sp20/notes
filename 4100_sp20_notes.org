@@ -1,0 +1,33 @@
+#+TITLE: Course Notes: CPSC 4100 Spring 2020
+#+AUTHOR: Craig Tanis
+
+* Languages
+** C
+   - originally 1973
+   - Dennis Ritchie (The R in K&R)
+   - ANSI (American National Standards Institute) C standard since 1989
+   - imperative: statements affect program state
+   - structured: formal control structures / blocks
+   - procedural: code organized into called procedures (subroutines)
+   - static typing: data type property assigned at compile time
+   - weakly typed (=void*=) : implicit type casting under some conditions
+   - compiles all the way to the hardware (executables not portable)
+   - allows for raw memory management and manipulation
+
+   - modeled naturally on the standard /von Neumann machine/ architecture
+     - CPU with registers, ALU, control unit
+     - memory containing both instructions and data
+
+*** hello world in C (the parts of)
+
+    #+begin_src C
+      #include <stdio.h>              /* preprocessor directive */
+
+      int main(int argc, char *argv[]) /* program entry point with command line arguments */
+      {
+          printf("Hello World\n");    /* a subroutine that does IO -- declared in stdio.h */
+          return 0;                   /* return code from main -> exit code for program */
+      }
+
+    #+end_src
+
