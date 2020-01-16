@@ -1,5 +1,12 @@
 #+TITLE: Course Notes: CPSC 4100 Spring 2020
 #+AUTHOR: Craig Tanis
+#+LATEX_CLASS: article
+#+LATEX_HEADER: \usepackage[cm]{fullpage}\setlength{\parindent}{0pt}\setlength{\parskip}{10pt}
+#+LATEX_HEADER:\usepackage[labelformat=empty]{caption}
+#+OPTIONS: author:nil date:nil
+
+
+
 
 * Languages
 ** C
@@ -31,3 +38,83 @@
 
     #+end_src
 
+* General Concepts
+
+** Binding Times
+   The act of associating /names/ with properties (data type, address, value)
+   is called /binding/, and different properties are bound at different
+   times.
+
+   #+begin_src C
+   #include <math.h>
+
+
+     void main() 
+     {
+      
+     int i;
+     double sum=0;
+
+         for (i=1; i<100; i++)
+              sum += sqrt(i);
+     }
+   #+end_src
+
+
+   - *language definition time*
+              
+     meaning of keywords is bound -- all implementations must behave the
+     same way (void, for)
+
+   - *language implementation time*
+
+     e.g. the range of values for ~int~ is implementation dependent.  (not the 
+     same in java)
+
+   - *compile time*
+
+     - data type for ~i~ is bound here.  (static typing)
+     - details of ~sqrt~ interface (declaration in math.h)
+
+   - *link time*
+
+     definition of ~sqrt~
+
+   - *load time*
+
+     memory address for all of these symbols
+
+   - *runtime*
+
+     ~i~ takes on a sequence of values
+
+
+   - early binding : before runtime   / late binding == runtime binding
+
+   - not all language systems use all times (interpreters are not compiled)
+
+
+** Parameter Passing Semantics
+
+*** Definitions
+
+    + formal parameters (specified in subroutine)
+    + actual parameters (passed to subroutine)
+    + the call stack
+
+*** parameter /correspondence/
+    + java and C use positional parameters
+    + other languages may have keyword parameters
+    + default parameters (C++ has this)
+
+**** variable arguments in C
+     processed with system calls
+
+
+*** Call-by-value
+     + formal parameters are local variables in the stack frame (aka
+       /activation record/) of the called method
+     + initialized with the value of the corresponding actual parameter
+     + variables used in calling function cannot be directly modified since
+       only the values are passed (pointers & references complicate this)
+       
