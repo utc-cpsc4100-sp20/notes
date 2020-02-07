@@ -14,10 +14,13 @@ void fill(int* ptr, int count)
 int* make_and_fill(int size)
 {
     /* bad idea! and the compiler warns us about the stack allocated return
-     * value */
-    int answer[size];
+     * value 
+     int answer[size];
+    */
 
-    
+    /* instead, allocate an uninitialized array on the heap... */
+    int* answer = (int*)malloc(size * sizeof(int));
+
 
     for (int i=0; i<size; i++)
     {
@@ -44,6 +47,11 @@ int main(int argc, char *argv[])
         printf("value %d = %d\n", i, values[i]);
     }
     
+
+    /* give back the memory allocated for this array -- requires value to be
+     * allocated using malloc, calloc or the like.. not stack-allocated */
+
+    free(values);
 
     return 0;
 }
