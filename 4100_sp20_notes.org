@@ -89,6 +89,32 @@
 
 
 
+** C++
+   - Bjarne Stroustrup
+   - first appeared 1985; standardized in 1998
+   - adds object oriented features, namespaces, generics, exceptions
+
+*** hello world in C++
+
+    #+begin_src c++
+      #include <iostream>
+
+      int main(int argc, char *argv[])
+      {
+          std::cout << "hello world" << std::endl;
+          return 0;
+      }
+
+    #+end_src
+
+
+*** Null-terminated strings
+    String data is stored as an array of characters with the NULL character
+    (ascii 0) indicating the end of the string.
+
+    Many useful functions for dealing with data of this type are available in ~string.h~.
+
+
 * General Concepts
 
 ** Binding Times
@@ -169,6 +195,31 @@
      + variables used in calling function cannot be directly modified since
        only the values are passed (pointers & references complicate this)
        
+
+     
+*** Call-by-reference
+    The lvalue of the actual parameter is computed before the method executes.
+    Formal parameters are replaced with actual parameter's lvalue.
+    Effectively, the formal parameters become aliases for the actual
+    parameters.    
+
+*** Call-by-macro-expansion
+    + formal parameters replaced with text of actual parameters
+    + macro call replaced with expanded macro
+
+**** variable capture
+     For a given code snippet
+     + *free variables* have no binding (are not associated with a specific
+       memory location)
+     + *bound variables* do
+     + Macro expansion can cause free variables to become bound inside the
+       macro expansion -- this has undefined semantics and will result in
+       errors
+       (see the SWAP exmaple)
+
+       
+
+
 ** Typing Systems
 
     - rules surrounding the binding of data type to variables and expressions
