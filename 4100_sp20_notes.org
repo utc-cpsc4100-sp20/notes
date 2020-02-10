@@ -38,6 +38,83 @@
 
     #+end_src
 
+*** C data types
+    :  void
+    :  char
+    :  int
+    :  float
+    :  double
+    :
+    :  // these assume int
+    :  short
+    :  long
+    :  signed
+    :  unsigned
+    :
+    : // may be optimized by using read only memory
+    : const
+    : 
+    : // no implementation-independent semantics
+    : volatile
+
+**** typedef
+     syntactic renaming of a type
+
+     : typedef unsigned int uint
+     : typedef const double CONSTANT;
+
+**** arrays
+     : int values[10];  -->   int* values
+
+     array lookups as math problems
+
+     #+begin_src C
+   int values[10];
+
+   for (int i=0; i<10; i++)
+   {
+       printf("%d: %d\n", i, values[i]);
+   }
+
+   printf("set values[3]\n");
+   /* type of values tells it how to interpret the 3 */
+   ,*(values + 3) = 999;
+
+   /* raw addresses */
+   printf("set values[8]\n");
+   ,*((int*)((void*)values + sizeof(int)*8))=1234;
+     #+end_src
+
+
+
+
+
+** C++
+   - Bjarne Stroustrup
+   - first appeared 1985; standardized in 1998
+   - adds object oriented features, namespaces, generics, exceptions
+
+*** hello world in C++
+
+    #+begin_src c++
+      #include <iostream>
+
+      int main(int argc, char *argv[])
+      {
+          std::cout << "hello world" << std::endl;
+          return 0;
+      }
+
+    #+end_src
+
+
+*** Null-terminated strings
+    String data is stored as an array of characters with the NULL character
+    (ascii 0) indicating the end of the string.
+
+    Many useful functions for dealing with data of this type are available in ~string.h~.
+
+
 * General Concepts
 
 ** Binding Times
@@ -118,3 +195,59 @@
      + variables used in calling function cannot be directly modified since
        only the values are passed (pointers & references complicate this)
        
+
+     
+*** Call-by-reference
+    The lvalue of the actual parameter is computed before the method executes.
+    Formal parameters are replaced with actual parameter's lvalue.
+    Effectively, the formal parameters become aliases for the actual
+    parameters.    
+
+*** Call-by-macro-expansion
+    + formal parameters replaced with text of actual parameters
+    + macro call replaced with expanded macro
+
+**** variable capture
+     For a given code snippet
+     + *free variables* have no binding (are not associated with a specific
+       memory location)
+     + *bound variables* do
+     + Macro expansion can cause free variables to become bound inside the
+       macro expansion -- this has undefined semantics and will result in
+       errors
+       (see the SWAP exmaple)
+
+       
+
+
+** Typing Systems
+
+    - rules surrounding the binding of data type to variables and expressions
+
+    - statically typed -- data types bound at compile time
+
+    - type safety: how aggressively does the language apply typing rules to
+      force you to write safe, good code
+
+      - strongly typed <---> weakly typed
+
+        C is (relatively) weakly typed because we can throw away type
+        information by casting to ~void*~
+
+** Definitions
+
+*** statements vs. expressions
+    - a statement is a executable step in the algorithm
+      + the building block of an algorithm
+
+    - an expression is anything with a value (can be evaluated)
+
+*** lvalues and rvalues
+    Every expression is either an lvalue or rvalue
+    + rvalue's are temporary and have the lifetime of the corresponding expression
+    + lvalue's persist beyond the expression
+      - variables (anything with a name)
+
+    + C has the ability to convert between the two in a manner
+
+
