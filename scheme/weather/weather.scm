@@ -1,3 +1,67 @@
+
+(define (mean lst)
+  (/ (apply + lst) (length lst)))
+
+
+(define (list-at index lst)
+  (if (= index 0) (car lst)
+      (list-at (- index 1) (cdr lst))))
+
+(define (average-average lst)           ;list in the form of chatt-weather,
+                                        ;below
+  (exact->inexact (mean (map cadr lst))))
+
+(define (average-difference lst)
+  (apply -
+         (map exact->inexact
+              (list
+               (mean (map caddr lst))
+               (mean (map cadddr lst))))))
+
+;;(define (daily-high x) (caddr x))
+(define daily-high caddr)
+(define daily-low cadddr)
+
+;; the hottest day
+(define (hottest-day lst)
+  (car
+   (sort lst (lambda (a b) (> (daily-high a) (daily-high b))))))
+
+(define (first-x lst x)
+  (if (= x 0) '()
+      (cons (car lst) (first-x (cdr lst) (- x 1)))))
+
+(define (day-weather date lst)
+  (assoc date lst))
+
+;; tag some temperatures
+
+(define (tag-temps lst)
+  (let ((high (daily-high
+               (car (sort lst
+                          (lambda (a b) (> (daily-high a) (daily-high b)))))))
+
+        (low (daily-low
+              (last (sort lst
+                          (lambda (a b) (> (daily-low a) (daily-low b))))))))
+    (map (lambda (day)
+           (if (= (daily-high day) high)
+               (append day '(high))
+               (if (=  (daily-low day) low)
+                   (append day '(low))
+                   day)))
+         lst)))
+
+;; (tag-temps chatt-weather)
+
+(define tagged-weather (tag-temps chatt-weather))
+
+(define (has-tags? day)
+  (not (null? (cddddr day))))
+
+(filter has-tags? tagged-weather)
+
+
 (define chatt-weather '(
                         (20190218 38       48       30       )
                         (20190219 33       38       29       )
@@ -362,3 +426,6 @@
                         (20200213 43       57       30       )
                         (20200214 30       39       23       )
                         ))
+
+
+
