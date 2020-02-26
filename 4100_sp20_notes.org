@@ -6,6 +6,14 @@
 #+OPTIONS: author:nil date:nil
 
 
+#+BEGIN_EXPORT LaTeX
+\thispagestyle{empty}
+\lstdefinelanguage{shell}{}
+\lstdefinelanguage{scheme}{}
+\lstdefinelanguage{text}{}
+\lstset{upquote=true}
+#+END_EXPORT
+
 
 
 * Languages
@@ -115,6 +123,126 @@
     Many useful functions for dealing with data of this type are available in ~string.h~.
 
 
+** Scheme
+
+   A lexically scoped dialect of Lisp
+
+   Strongly typed / dynamically typed.
+
+
+*** data types
+    + numbers:   ~1.0~, ~45~, ~8+3i~, ...
+    + characters: ~#\x~
+    + booleans: ~#t~  ~#f~  (note this is different than ~#\t~ and ~#\f~)
+    + symbols: 'foo
+    + strings: "hello"
+    + vectors: ~#(1 2 3)~  -- like a fixed-length list
+          
+*** procedures
+
+    + created with a ~lambda~ expression
+
+      #+begin_src scheme
+      (lambda (a b)
+        (+ a b))                              ;add a and b
+      #+end_src
+
+    + bound to a variable with the ~define~ special form
+
+      #+begin_src scheme
+        (define add2 (lambda (a b)
+                       (+ a b)))
+      #+end_src
+
+*** function currying
+
+    concept from the lambda calculus where procedures may only take a single
+    parameter.
+
+    f(a,b) = {f'(a)}(b)
+
+    For example, if lambdas could only take one argument:
+    #+begin_src scheme
+      (define add (lambda (a) (lambda (b) (+ a b))))
+      ((add 5) 10)
+    #+end_src
+
+
+
+
+*** read from user
+    + ~(read)~ -> symbol
+    + ~(use-modules (ice-9 readline))  (readline "enter a string")~ -> string
+
+   
+*** control structures
+
+    + if/else
+      + eq? equal? ...
+    + when/unless
+    + loops do exist:  while / do
+    + begin  (implied within lambda)
+     
+
+   
+*** working with lists/pairs
+
+    + cons
+    + car / cdr
+    + car, caar,  cddr, cadr, etc.
+    + list / pair procedures
+    + memq , assoc
+
+
+    ~cons~ creates a new list with the first parameter stuck on the beginning of
+    the second.
+
+    #+begin_src text
+      scheme@(guile-user)> (cons 'a '(1 2 3))
+      $2 = (a 1 2 3)
+    #+end_src
+
+    ~car~ returns the first item in a list.  ~cdr~ returns the rest of the list,
+    after the ~car~
+
+    #+begin_src text
+      scheme@(guile-user)> (car '(this that the other))
+      $3 = this
+      scheme@(guile-user)> (cdr '(this that the other))
+      $4 = (that the other)
+    #+end_src
+
+   
+*** recursion as iteration
+    + factorial
+    + map, filter
+
+
+*** binding local variables introduce new variables
+    + let, let*, letrec, letrec*
+      let* -> nested lets
+    + nested define -> letrec
+
+
+*** closures
+    A function with environment containing free variables bound in some other
+    /environment/ that existed when the function was created.
+
+    #+begin_src scheme
+      (define (make-adder base)
+        (lambda (i)
+          (+ base i)))
+    #+end_src
+
+*** imperatives
+    + ~set!~ (and many other variants)
+   
+*** lambda as object
+    + closures and imperatives together give object-like functionality
+#    + see [[./scheme/object.scm]]
+
+
+
 * General Concepts
 
 ** Binding Times
@@ -218,6 +346,22 @@
        (see the SWAP exmaple)
 
        
+*** Call-by-name
+
+     Formal parameters are substituted (in a capture-avoiding way) with "text"
+     of actual parameters.
+
+     Also: *call-by-need* semantics: this is done in a memoized way (values are
+     cached so it should be faster for certain applications)
+
+
+** Parameter evaluation
+   + applicative order: parameters are evaluated before subroutine is called
+     (this is typical for C, Java, scheme...)
+   + normal order: actual parameters are substituted into subroutine body and
+     evaluated after subroutine call begins
+     - see, [[Call-by-name]]
+
 
 
 ** Typing Systems
