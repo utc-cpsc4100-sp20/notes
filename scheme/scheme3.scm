@@ -64,3 +64,10 @@
 
 ;; scheme@(guile-user)> (map (make-adder 42) '(1 2 3 4 5))
 ;; $26 = (43 44 45 46 47)
+
+(define (replace x lst)
+  (if (null? lst ) '()
+      (cons x (replace x (cdr lst)))))
+
+(define (replace2 x lst)
+  (map (lambda (z) x) lst))
