@@ -395,3 +395,317 @@
     + C has the ability to convert between the two in a manner
 
 
+* Social Distancing Lecture Notes
+** Lecture 17 - Social Distancing 1 [2020-03-23 Mon]
+
+# **** TIME TRAVEL
+
+# **** lazy evaluation can be used to do things like generate infinite lists
+
+#      This would not work:
+#      #+begin_src scheme
+#        (map '(lambda (a) (+ a 10)) (infinite-list))
+#      #+end_src
+
+#      we will look at these in other languages.  in scheme they are called
+#      "streams" if you are interested
+
+# **** lazy evaluation can be done more elegantly with delay / force
+
+#      #+begin_src scheme
+#        (define later)
+#        (begin
+#          (display  "outside delay")
+#          (set! later (delay
+#                        (begin
+#                          (display "in delay")
+#                          1)))
+#          (display "after delay"))
+
+#        (define promises (map (lambda (a b) (delay (string-append a b))) '("hello" "there") '("foo" "bar")))
+
+#        (map force promises)
+
+#      #+end_src
+
+# **** this has implications for concurrency    
+
+
+
+
+
+**** continuations
+     + a black box / abstraction of the current state of a program
+
+     + a continuation is the call stack
+
+     + in guile scheme, continuations are copies of the call stack right now 
+
+     + an /escape procedure/ -- replaces the call stack .. made with call/cc
+
+     + the presence of first-class continuations suggests that programs can act
+     on their own state
+
+     #+begin_src scheme
+     (define kont (list))
+     (cons 'top (call-with-current-continuation (lambda (c) (set! kont c))))    
+     #+end_src
+
+     #+begin_src scheme
+     (+ (call/cc (lambda (k^) (/ (k^ 5) 0))) 8)
+     #+end_src
+
+     + k^ is an escape procedure.  we can build break/resume
+
+     #+begin_src scheme
+       scheme@(guile-user)> (if (call-with-current-continuation (lambda (x) (set! kont x) #f)) 'true 'false)
+       $38 = false
+       scheme@(guile-user)> (kont #t)
+       $39 = true
+       scheme@(guile-user)> (kont #f)
+       $40 = false
+     #+end_src
+
+     more...
+     #+begin_src scheme
+       (define kont '())
+       (define (go)
+         (let ((cmd (call/cc (lambda (c) (set! kont c) 'none))))
+           (cond
+            ((eq? cmd 'up) 1)
+            ((eq? cmd 'down) -1)
+            (else 0))))
+
+       (+ 100 (go))
+       (kont 'up)
+       (kont 'down)
+     #+end_src
+
+
+*** last continuation example    (lays the groundwork for cooperative multitasking)
+
+    #+begin_src scheme
+
+       (define escape)                         ;top-level
+       (define RESUME)
+       (call/cc (lambda (k^) (set! escape k^)))
+
+       (define BREAK
+         (lambda (msg)
+           (call/cc
+            (lambda (k^)
+              (set! RESUME k^)
+              (escape msg)))))
+
+       (map
+        (lambda (a)
+          (BREAK (string-append "mid map: " (number->string a)))
+          (+ 5 a))
+        '(1 2 3))
+
+    #+end_src
+     
+
+
+    
+*** exam review
+
+
+    
+** Lecture 18 - Social Distancing 2 [2020-03-25 Wed]
+
+***   Scripting languages
+    + often distinguished from /systems programming/ languages like C that are ...
+      - statically typed
+      - compiled to machine code
+
+    # Read: "Scripting: Higher-Level Programming for the 21st Century" for a 1998
+    # perspective on scripting vs. systems
+
+
+**** scripting often refers to *glue code* for more connecting different pieces
+     - dynamic typing facilitates this
+     - historically very text-oriented
+
+**** Modern scripting languages may better be described as /dynamic languages/
+
+     - dynamic typing
+     - first class functions
+     - eval
+
+*** Bash
+    - glue language part 1
+    - pipelines
+      #+begin_src sh
+        ls /Users |wc -l
+      #+end_src
+
+    - variables and arrays -- the environment
+
+    - simple logic
+      #+begin_src sh
+         for i in {0..5}; do echo $i; done
+      #+end_src
+      
+
+     
+*** Perl
+
+    + practical extraction and report language
+    + pathologically eclectic rubbish lister
+
+
+    Initially created by Larry Wall in 1987.
+
+    *We are talking about Perl 5*
+
+    A great example of a glue code language.  It has some interesting
+    capabilities including an unparalleled implementation of regular
+    expressions, and inspired many modern scripting languages.
+
+    + closures / first-class functions
+    + objects
+    + reflection
+    + garbage collection
+
+
+    Last time, I introduced you to perl syntax, and it is unusual.
+    I'd like to emphasize a few aspects of this.
+
+    1. Larry Wall created this language because he had a very specific idea of
+       how he wanted to be able to write programs, and it involved a melange
+       of ideas.
+    2. This is primarily a language for the programmer, not for the system.
+       - Every programmer should have a go-to scripting language
+    3. They added capabilities to support bigger projects as the language
+       became more popular (strict, objects, etc.)
+    
+
+    While we're here, we want to look at some design decisions that are
+    clearly different than those by other languages: dynamic & weak typing,
+    call by reference, dynamic variable scope.  and we want to celebrate the
+    things it's good at -- text processing, rapid prototyping.
+
+
+      
+**** weird things
+
+     + variables use leading sigils to distinguish usage
+     + everything is global by default
+     + default punctuation variables
+     + parentheses are often optional
+
+**** syntax
+
+*****     primary data types
+
+      *Scalars*
+
+      + numbers
+      + strings
+      + everything that is neither 0 nor empty string "" is true
+
+
+      *Compound*
+      + lists
+      + associative arrays (hash tables)
+
+**** weak & dynamic typing
+
+     this necessitates something that feels like the opposite of operator or
+     function overloading.  we have different versions of things to force the
+     data to be treated as expected:  ~cmp vs <=>~
+
+     #+begin_src perl
+       $z = "3" x 3;
+       print $z, "\n";
+       print $z+5, "\n";
+     #+end_src
+
+
+
+**** imperative, procedural and functional
+     - map, grep
+   
+**** dynamic variable scope
+     #+begin_src perl
+use strict;
+use vars qw($x);
+
+
+sub test_variable {
+
+  print "$_[0]: The variable is $x\n";
+}
+
+
+
+test_variable(1);
+
+
+
+$x = "house";
+test_variable(2);
+
+
+{
+  my $x="hat trick";
+  test_variable(3);
+}
+
+test_variable(4);
+
+
+{
+  local $x="submarine";
+  test_variable(5);
+}
+
+
+
+test_variable(6);
+
+
+my @list=qw(this is a funny way to make a list of strings!);
+print "@list\n";
+
+$"="\n";
+print "@list\n";
+
+     #+end_src
+
+**** call-by-reference
+     #+begin_src perl
+       sub change_it {
+         #my ($x) = @_;
+         $_[0]=100;
+         #$x = 100;
+       }
+
+
+       my $z = 9;
+
+       print "$z\n";
+       change_it($z);
+       print "$z\n";
+
+     #+end_src
+
+**** A common -idiom- results in call-by-value semantics
+
+     
+**** integration with the shell
+     #+begin_src sh
+       ls -al /Users | perl -pe 's/.*?([a-z]+)\/?$/uc $1/egi'
+     #+end_src
+
+     
+**** regular expressions
+
+     : abc
+     : .
+     : *, +, ?
+     : ()
+
+     useful for matching and subtstiution.
+  
