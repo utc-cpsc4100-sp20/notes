@@ -1,0 +1,7 @@
+perl_syntax.pl
+wordcount.pl
+total 16
+drwxr-xr-x   5 ctanis  staff   160 Mar 25 13:02 .
+drwxr-xr-x  13 ctanis  staff   416 Mar 25 11:39 ..
+-rw-r--r--   1 ctanis  staff   881 Mar 25 13:01 perl_syntax.pl
+-rw-r--r--   1 ctanis  staff  1092 Mar 25 11:40 wordcount.pl
