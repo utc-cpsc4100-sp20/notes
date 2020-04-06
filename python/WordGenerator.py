@@ -31,6 +31,7 @@ def counter(stop):
     value=0
     while value < stop:
         yield inflect.engine().number_to_words(value)
+        #print (inflect.engine().number_to_words(value))
         value += 1
 
         
