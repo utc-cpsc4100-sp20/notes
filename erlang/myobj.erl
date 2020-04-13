@@ -36,7 +36,7 @@ value_object_func(Value) ->
             value_object_func(Value -1);
         { Pid, _  } ->
             value_response_send(Pid, unknown),
-            value_object_func(Value -1)
+            value_object_func(Value)
     end.
 
 
